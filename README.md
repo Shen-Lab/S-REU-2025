@@ -1,0 +1,3 @@
+ESM2 and ESM-IF concatenated embeddings as well as their paired csv file, from Protein Gym. The embeddings are labeled "_combined.npy"
+
+https://zenodo.org/records/16702612?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImJiZGFjYjBjLTZjMTctNGUwNC04ZGM0LWUyMjRiNDNkODM3OCIsImRhdGEiOnt9LCJyYW5kb20iOiJjNTgwN2M0NmJjNzMyY2I1YmI4MmNjOWY3MDJkNWZmZSJ9.f91sBkOiQQQsmmxSCZUX29kz_WsfwxN-VCfrdXGwmctYkIh8skZ9j6uSz-ofx0GFoQZb7k6NwIuPRBIDtR_PAg
