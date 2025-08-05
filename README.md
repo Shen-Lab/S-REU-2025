@@ -3,7 +3,7 @@ This repository contains all code and instructions for setting up an enviroment 
 
 The code will read a csv file that contains the name, 3di sequence and amino acid sequence of the protien. Then it will output a csv that will contain a number of predicted sequences, their lengths and expected lengths. Make sure you have an output path for the csv. 
 
-##Dataset:
+## Dataset:
 
 
 ## Command to setup enviroment
