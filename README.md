@@ -40,10 +40,12 @@ pip install transformers==4.44.0
 
 **Files to be downloaded from huggingface**
 ```
+#---------Some instructions-------------------
 #First create an hf_cache directory in your scratch/user/your_netid directory:
 #Second create a directory in your Pannot directory called local_pretrained_encoders
 #Thirdly create another directory inside your Pannot directory called checkpoints
 #NOW, prior to continuing you must have a huggingface account.
+#---------------------------------------------
 pip install -U "huggingface_hub[cli]"
 
 huggingface-cli login
@@ -79,4 +81,143 @@ snapshot_download(
         "pannot-Meta-Llama-3.1-8B-Instruct-pretrain-v02/**"
     ]
 )
+```
+## changes to some python files
+**You must have to update the directories in the code to match your directories inorder for it to work properly.**
+You will have to go into the following directory (/scratch/user/.../Pannot/pannot/model/multimodel_encoder). Inside this directory you must update the esm_seqeunce_encoder.py code to the code bellow:
+
+```python
+import torch
+import torch.nn as nn
+from transformers import AutoModel, AutoTokenizer, PretrainedConfig
+ 
+class ESMSeqTower(nn.Module):
+    def __init__(
+        self,
+        model_name: str = None,
+        args=None,
+        delay_load: bool = False,
+        no_pooling: bool = True,
+    ):
+        super().__init__()
+        self.is_loaded = False
+        self.args = args
+ 
+        # Default to local model path for offline use
+        self.local_model_dir = "/scratch/user/jawadnelhassan2005/LLM/Pannot/local_pretrained_encoders/esm2_t33_650M_UR50D"
+        self.model_path = model_name or self.local_model_dir
+ 
+        self.select_layer = getattr(args, 'mm_seq_select_layer', -1)
+        self.pooling = getattr(args, 'mm_seq_select_feature', 'cls')  # 'cls' or 'mean'
+        self.no_pooling = getattr(args, 'mm_seq_no_pooling', no_pooling)
+ 
+        if not delay_load or getattr(args, 'unfreeze_mm_seq_tower', False):
+            self.load_model()
+ 
+    def load_model(self, device_map=None):
+        if self.is_loaded:
+            print(f'{self.model_path} is already loaded. Skipping load.')
+            return
+ 
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_path,
+            trust_remote_code=True,
+            local_files_only=True
+        )
+        self.encoder = AutoModel.from_pretrained(
+            self.model_path,
+            trust_remote_code=True,
+            local_files_only=True,
+            output_hidden_states=True,
+            device_map=device_map
+        )
+        self.encoder.requires_grad_(False)
+        self.is_loaded = True
+ 
+    @torch.no_grad()
+    def forward(self, input_ids, attention_mask):
+        if not self.is_loaded:
+            self.load_model()
+ 
+        if input_ids.dim() == 1:
+            input_ids = input_ids.unsqueeze(0)
+        input_ids = input_ids.to(self.device)
+ 
+        if attention_mask is None:
+            attention_mask = torch.ones_like(input_ids)
+ 
+        if attention_mask.dim() == 1:
+            attention_mask = attention_mask.unsqueeze(0)
+        attention_mask = attention_mask.to(self.device)
+ 
+        vocab_size = self.encoder.config.vocab_size
+        assert (input_ids < vocab_size).all(), f"Token id out of range! Max: {input_ids.max().item()}, vocab_size: {vocab_size}"
+ 
+        outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
+        hidden_states = outputs.hidden_states[self.select_layer]
+ 
+        if self.no_pooling:
+            return hidden_states
+ 
+        if self.pooling == 'cls':
+            return hidden_states[:, 0, :]
+        elif self.pooling == 'mean':
+            mask = attention_mask.unsqueeze(-1).expand_as(hidden_states)
+            sum_emb = torch.sum(hidden_states * mask, dim=1)
+            counts = mask.sum(dim=1).clamp(min=1e-9)
+            return sum_emb / counts
+        else:
+            raise ValueError(f"Unsupported pooling type: {self.pooling}")
+ 
+    def tokenize(self, sequences, return_tensors='pt', padding=True, truncation=True, max_length=1024):
+        if not self.is_loaded:
+            self.load_model()
+        return self.tokenizer(
+            sequences,
+            return_tensors=return_tensors,
+            padding=padding,
+            truncation=truncation,
+            max_length=max_length
+        )
+ 
+    @property
+    def dummy_feature(self):
+        if self.no_pooling:
+            return torch.zeros(1, 1, self.hidden_size, device=self.device, dtype=self.dtype)
+        return torch.zeros(1, self.hidden_size, device=self.device, dtype=self.dtype)
+ 
+    @property
+    def dtype(self):
+        return self.encoder.dtype if self.is_loaded else torch.get_default_dtype()
+ 
+    @property
+    def device(self):
+        return next(self.encoder.parameters()).device if self.is_loaded else torch.device('cpu')
+ 
+    @property
+    def config(self):
+        return self.encoder.config if self.is_loaded else PretrainedConfig.from_pretrained(
+            self.model_path,
+            local_files_only=True
+        )
+ 
+    @property
+    def hidden_size(self):
+        return self.config.hidden_size
+
+```
+
+Now go this directory (scratch/user/.../Pannot/pannot/) and update the subroutine called _format_message to this:
+```python
+def _format_message(self, message: Union[str, ProteinInput]) -> str:
+    if isinstance(message, ProteinInput):
+        fields = []
+        if message.sequence:
+            fields.append(f"<seq> {message.sequence} </seq>")
+        if message.structure:
+            fields.append(f"<str> {message.structure} </str>")
+        if message.annotations:
+            fields.append(f"<anno> {message.annotations} </anno>")
+        return "\n".join(fields)
+    return message
 ```
