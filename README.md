@@ -228,7 +228,7 @@ def _format_message(self, message: Union[str, ProteinInput]) -> str:
 ```
 
 **For creating an interactive inference (running the Inverse_Folding_LLM.py):**
-```
+```python
 srun --partition=gpu --gres=gpu:a100:1 --nodes=1 --ntasks=2 --cpus-per-task=4 --mem=96G --time=08:00:00 --pty bash
 
 
