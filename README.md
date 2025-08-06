@@ -5,6 +5,60 @@ The code will read a csv file that contains the name, 3di sequence and amino aci
 
 ## Dataset:
 
+## For creating an interactive inference (running the Inverse_Folding_LLM.py):**
+```python
+
+srun --partition=gpu --gres=gpu:a100:1 --nodes=1 --ntasks=2 --cpus-per-task=4 --mem=96G --time=08:00:00 --pty bash
+#wait for the srun to finish allocation then continue
+
+module purge
+
+module load CUDA/11.8.0 Anaconda3
+# eval "$(conda shell.bash hook)"
+
+
+# Set CUDA environment variables on Grace HPRC of TAMU
+export LD_LIBRARY_PATH=$EBROOTCUDA/lib64:$LD_LIBRARY_PATH
+
+# Set Hugging Face cache directory to a writable location
+export HF_HOME=$SCRATCH/hf_cache
+export HF_HUB_OFFLINE=1
+
+
+#Set the Torch cache directory in the $SCRATCH
+
+export TORCH_HOME=$SCRATCH/.cache/torch
+
+# # Create the directory if it doesn't exist
+# mkdir -p $TRANSFORMERS_CACHE
+
+
+source activate pannot-dev1
+
+# # The reason I deactivate and activate again is that 
+# # I want to make sure the python is used in the environment,
+# # not the default python in the system.(in sw/...)
+# # (the problem would occur when i activate and directly call python)
+conda deactivate 
+
+source activate pannot-dev1
+
+
+# Example: Pannot pretraining script (multimodal: protein sequence + structure)
+# Be sure to set these environment variables or modify inline:
+
+MODEL_VERSION=Meta-Llama-3.1-8B-Instruct
+PROMPT_VERSION=plain
+
+# Customize these:
+DATA_PATH=/scratch/user/jawadnelhassan2005/LLM/Pannot/data/opi/OPI_full_1.61M_train_converted.jsonl #<-- will be different for you. Just give it a directory to the OPI_full_1.61M_train_converted.jsonl
+# DATA_PATH=$SCRATCH/TAMU/PhD/Pannot/data/opi/OPI_full_1.61M_train_first_10000.json
+PRET_MODEL_DIR=./checkpoints/pannot-${MODEL_VERSION}-pretrain-v00
+SEQ_TOWER=ESM
+STR_TOWER=ESMIF
+
+python Inverse_folding_llm.py
+```
 
 ## Command to setup enviroment
 **For Grace (TAMU)**
@@ -227,56 +281,4 @@ def _format_message(self, message: Union[str, ProteinInput]) -> str:
     return message
 ```
 
-**For creating an interactive inference (running the Inverse_Folding_LLM.py):**
-```python
-srun --partition=gpu --gres=gpu:a100:1 --nodes=1 --ntasks=2 --cpus-per-task=4 --mem=96G --time=08:00:00 --pty bash
 
-
-module purge
-
-module load CUDA/11.8.0 Anaconda3
-# eval "$(conda shell.bash hook)"
-
-
-# Set CUDA environment variables on Grace HPRC of TAMU
-export LD_LIBRARY_PATH=$EBROOTCUDA/lib64:$LD_LIBRARY_PATH
-
-# Set Hugging Face cache directory to a writable location
-export HF_HOME=$SCRATCH/hf_cache
-export HF_HUB_OFFLINE=1
-
-
-#Set the Torch cache directory in the $SCRATCH
-
-export TORCH_HOME=$SCRATCH/.cache/torch
-
-# # Create the directory if it doesn't exist
-# mkdir -p $TRANSFORMERS_CACHE
-
-
-source activate pannot-dev1
-
-# # The reason I deactivate and activate again is that 
-# # I want to make sure the python is used in the environment,
-# # not the default python in the system.(in sw/...)
-# # (the problem would occur when i activate and directly call python)
-conda deactivate 
-
-source activate pannot-dev1
-
-
-# Example: Pannot pretraining script (multimodal: protein sequence + structure)
-# Be sure to set these environment variables or modify inline:
-
-MODEL_VERSION=Meta-Llama-3.1-8B-Instruct
-PROMPT_VERSION=plain
-
-# Customize these:
-DATA_PATH=/scratch/user/jawadnelhassan2005/LLM/Pannot/data/opi/OPI_full_1.61M_train_converted.jsonl #<-- will be different for you. Just give it a directory to the OPI_full_1.61M_train_converted.jsonl
-# DATA_PATH=$SCRATCH/TAMU/PhD/Pannot/data/opi/OPI_full_1.61M_train_first_10000.json
-PRET_MODEL_DIR=./checkpoints/pannot-${MODEL_VERSION}-pretrain-v00
-SEQ_TOWER=ESM
-STR_TOWER=ESMIF
-
-python Inverse_folding_llm.py
-```
