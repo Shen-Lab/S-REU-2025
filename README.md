@@ -4,6 +4,7 @@ This repository contains all code and instructions for setting up an enviroment 
 The code will read a csv file that contains the name, 3di sequence and amino acid sequence of the protien. Then it will output a csv that will contain a number of predicted sequences, their lengths and expected lengths. Make sure you have an output path for the csv. 
 
 ## Dataset:
+CASP15 is the dataset I used to experiment with the model, but you’re welcome to try other datasets as well. Keep in mind that the prompt has a token limit of 2048, which restricts how many examples you can include. If the prompt exceeds this limit, the model will forget the earliest parts of the input. So far, CASP15 has worked well with 7 training examples and 1 query. You can experiment further to see how many examples your setup can handle.
 
 ## For creating an interactive inference (running the Inverse_Folding_LLM.py):
 ```python
