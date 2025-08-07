@@ -13,7 +13,7 @@ import pandas as pd
 CSV_INPUT = "/scratch/user/jawadnelhassan2005/LLM/Pannot/csv_output/Structural_sequences.csv" # <------ will be different for whoever uses the code
 #  you will need to have Structural_sequences.csv (this is a csv with every csv of casp 15's 3di sequences and amino acid sequence)
 VERSION = "E"
-CSV_OUTPUT = "/scratch/user/jawadnelhassan2005/LLM/Pannot/csv_output/mini3di_outputs_structural.csv" # <------ will be different for who ever uses the code, you will have to make an output directory named csv_output
+CSV_OUTPUT = "/scratch/user/jawadnelhassan2005/LLM/Pannot/csv_output/predicted_outputs.csv" # <------ will be different for who ever uses the code, you will have to make an output directory named csv_output
 VERSION = "E"
 NUM_ATTEMPTS = 100  # The number of times this will repeat the code to get an output
 
@@ -126,3 +126,4 @@ for attempt in range(1, NUM_ATTEMPTS + 1):
 # === Final Report ===
 avgLength = sum(lengths) / NUM_ATTEMPTS
 print(f"\n✅ Finished {NUM_ATTEMPTS} runs. Average Length: {avgLength:.2f}")
+
