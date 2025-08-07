@@ -142,15 +142,16 @@ snapshot_download(
         "pannot-Meta-Llama-3.1-8B-Instruct-pretrain-v02/**"
     ]
 )
-
+```
 ## To run scatterplot.py, you must execute it locally on your computer rather than on the HPRC. Here's what you'll need to get started:
+
 ```python
 pip install pandas
 
 pip install matplotlib
 ```
 
-```
+
 ## changes to some python files
 **You must have to update the directories in the code to match your directories inorder for it to work properly.**
 You will have to go into the following directory (/scratch/user/.../Pannot/pannot/model/multimodel_encoder). Inside this directory you must update the esm_seqeunce_encoder.py code to the code bellow:
