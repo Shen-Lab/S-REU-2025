@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load CSV
-df = pd.read_csv("CASP15.csv")
+df = pd.read_csv("predicted_outputs.csv")
 
 # Drop attempts with missing or zero predictions
 df = df[df["PredictedLen"] > 0]
