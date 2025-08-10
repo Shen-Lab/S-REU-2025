@@ -35,7 +35,7 @@ export TORCH_HOME=$SCRATCH/.cache/torch
 # mkdir -p $TRANSFORMERS_CACHE
 
 
-source activate pannot-dev1
+source activate pannot-dev
 
 # # The reason I deactivate and activate again is that 
 # # I want to make sure the python is used in the environment,
@@ -43,7 +43,7 @@ source activate pannot-dev1
 # # (the problem would occur when i activate and directly call python)
 conda deactivate 
 
-source activate pannot-dev1
+source activate pannot-dev
 
 
 # Example: Pannot pretraining script (multimodal: protein sequence + structure)
