@@ -62,7 +62,7 @@ STR_TOWER=ESMIF
 python Inverse_folding_llm.py
 ```
 
-## Command to setup enviroment
+## Commands to setup enviroment
 **For Grace (TAMU)**
 ```
 module purge
