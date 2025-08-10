@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 # === CONFIG ===
-CSV_INPUT  = "/scratch/user/jawadnelhassan2005/LLM/Pannot/csv_output/Casp_15.csv"
+CSV_INPUT  = "/scratch/user/jawadnelhassan2005/LLM/Pannot/csv_input/Casp_15.csv"
 CSV_OUTPUT = "/scratch/user/jawadnelhassan2005/LLM/Pannot/csv_output/predicted_sequences.csv"  # <-- renamed
 VERSION = "E"
 NUM_ATTEMPTS = 100  # how many decoding runs
@@ -174,4 +174,5 @@ try:
             print(f"- attempt {int(r['Attempt'])}: len={int(r['PredictedLen'])}  {r['PredictedSeq']}")
 except Exception as e:
     print(f"(Could not load/read {CSV_OUTPUT} for summary) → {e}")
+
 
