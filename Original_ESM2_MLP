@@ -9,7 +9,7 @@ from scipy.stats import spearmanr
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Data directory
-data_dir = "/scratch/user/jawadnelhassan2005/supervised/MEP-SiPLM-main/supervised/embeddingstest"
+data_dir = "/scratch/user/gaygysyz2003/supervised/MEP-SiPLM-main/supervised/embeddingstest"
 embedding_files = sorted(f for f in os.listdir(data_dir) if f.endswith("_embeddings.npy"))
 
 # Collect all data
