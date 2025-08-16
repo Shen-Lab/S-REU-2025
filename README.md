@@ -12,3 +12,31 @@ environment.yml is the environment that was used. you can import it into hprc us
 
 The embeddings for the combined.npy files are in the following zenodo
 https://zenodo.org/records/16702612?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImJiZGFjYjBjLTZjMTctNGUwNC04ZGM0LWUyMjRiNDNkODM3OCIsImRhdGEiOnt9LCJyYW5kb20iOiJjNTgwN2M0NmJjNzMyY2I1YmI4MmNjOWY3MDJkNWZmZSJ9.f91sBkOiQQQsmmxSCZUX29kz_WsfwxN-VCfrdXGwmctYkIh8skZ9j6uSz-ofx0GFoQZb7k6NwIuPRBIDtR_PAg
+
+# Multimodal MLP
+This model takes int he esm2 + esm-if concatenated identity 
+Directory layout
+
+Run the scripts from the folder that contains them (same directory as combinedMLP.py and multitask_predictor.py). Create these folders exactly as expected by the code:
+
+For combinedMLP.py
+
+./finalem/                # embeddings (per assay)
+    <assay>_combined.npy
+./esm2em/                 # labels (per assay)
+    <assay>_labels.npy
+
+Each <assay> must exist in both places with matching sample counts.
+
+For multitask_predictor.py
+
+../../MultimodalStuff/finalem/               # per-assay CSVs + matching embeddings
+    <name>.csv
+    <name>_combined.npy
+../Structure-informed_PLM/mastercsv/         # metadata CSVs
+    DMS_substitutions.csv
+    mapped_pathogenicity_threeLabels.csv
+
+The script looks for CSV files in ../../MultimodalStuff/finalem/ and loads the same-named _combined.npy next to each CSV.
+
+The two metadata CSVs must be in ../Structure-informed_PLM/mastercsv/ relative to the script.
