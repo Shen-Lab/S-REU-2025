@@ -20,10 +20,8 @@ Run the scripts from the folder that contains them (same directory as combinedML
 ## For combinedMLP.py
 
 ./finalem/                # embeddings (per assay)
-
     <assay>_combined.npy
 ./esm2em/                 # labels (per assay)
-
     <assay>_labels.npy
 
 Each <assay> must exist in both places with matching sample counts.
